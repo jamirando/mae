@@ -24,7 +24,7 @@ def show_image(imaage, title=''):
 def prepare_model(chkpt_dir, arch='mae_vit_large_patch16'):
 	model = getattr(models_mae, arch)()
 	checkpoint = torch.load(chkpt_dir, map_location='cpu')
-	msg = model.load_state_dict(checkpoint['model'], strict=false)
+	msg = model.load_state_dict(checkpoint['model'], strict=False)
 	print(msg)
 	return model
 
@@ -34,9 +34,9 @@ def run_one_image(img, model):
 	x = x.unsqueeze(dim=0)
 	x = torch.einsum('nhwc->nchw',x)
 
-	loss, y, mask = model(x.float, mask_ratio=0.75)
+	loss, y, mask = model(x.float(), mask_ratio=0.75)
 	y = model.unpatchify(y)
-	y = torch.einsum('nchw->nhwc',y).detach.cpu()
+	y = torch.einsum('nchw->nhwc',y).detach().cpu()
 
 	mask = mask.detach()
 	mask = mask.unsqueeze(-1).repeat(1, 1, model.patch_embed.patch_size[0]**2 *3)
